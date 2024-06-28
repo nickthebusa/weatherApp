@@ -1,0 +1,100 @@
+import { useState, useEffect } from 'react';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faDroplet } from '@fortawesome/free-solid-svg-icons'
+
+// hooks
+import { useForecastData } from '../hooks/useFetch.ts';
+
+interface ForecastListProps {
+  urlForecast: string;
+  celsius: boolean;
+  setCelsius: (celsius: boolean) => void;
+}
+
+interface ListItem {
+  name: string;
+  startTime: string;
+  temperature: number;
+  temperatureUnit: string;
+  probabilityOfPrecipitation: {
+    unitCode: string;
+    value: number | null;
+  }
+  relativeHumidity: {
+    value: number
+  }
+  windSpeed: string;
+  windDirection: string;
+  icon: string;
+  shortForecast: string;
+  detailedForecast: string;
+}
+
+function ForecastList(props: ForecastListProps) {
+
+  const [sortedList, setSortedList] = useState<ListItem[][]>([])
+
+  const [forecastData] = useForecastData(props.urlForecast);
+
+  const apiUrl = "https://api.weather.gov";
+
+  useEffect(() => {
+
+    const forecastList = forecastData ? forecastData.data.properties.periods : [];
+
+    function makeNewList(forecastList: ListItem[]) {
+      const updatedList = [];
+      for (let i = 0; i < forecastList.length; ++i) {
+        if (i !== forecastList.length - 1) {
+          const item1 = new Date(forecastList[i].startTime);
+          const item2 = new Date(forecastList[i + 1].startTime);
+          if (item1.getDay() === item2.getDay()) {
+            updatedList.push([forecastList[i], forecastList[i+1]])
+          }
+        }
+      }
+      return updatedList;
+    }
+
+    if (forecastList.length !== 0) {
+      const newList = makeNewList(forecastList)
+      setSortedList(newList);
+    }
+  },[setSortedList, forecastData])
+
+
+  return (
+    <div className='forecast-list-div'>
+      {sortedList.map((item: ListItem[], i: number) => (
+        <div className='forecast-list-item-div' key={i}>
+          <p>{item[0].name}</p>
+          {
+            props.celsius ?
+              (<p
+                onClick={() => props.setCelsius(!props.celsius)}
+               >
+                {((item[0].temperature - 32) * (5 / 9)).toFixed(2)} /
+                {((item[1].temperature - 32) * (5 / 9)).toFixed(2)} {" °C"}
+              </p>)
+              :
+              (<p
+                onClick={() => props.setCelsius(!props.celsius)}
+              >
+                {item[0].temperature} /
+                {item[1].temperature} °{item[0].temperatureUnit}
+              </p>)
+          }
+          <p className='precipitation-weekly'>
+            <FontAwesomeIcon className='weekly-droplet' icon={faDroplet}/>
+            {item[0].probabilityOfPrecipitation.value || 0}-
+            {item[1].probabilityOfPrecipitation.value || 0}%
+          </p>
+          <img src={apiUrl.concat(item[0].icon)} alt="forecast-icon-weekly" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export default ForecastList;

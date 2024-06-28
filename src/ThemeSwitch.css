@@ -1,0 +1,44 @@
+
+svg {
+  cursor: pointer;
+}
+
+.theme-switch-div {
+  margin: 0 0.5rem 0 0;
+}
+
+.icon-wrapper {
+  position: relative;
+  width: 25px;
+  height: 25px;
+  font-size: 1.5rem;
+}
+
+.icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.icon.show {
+  transform: translateX(0);
+  opacity: 1;
+  z-index: 2;
+}
+
+.icon.hide {
+  transform: translateX(-30px);
+  opacity: 0;
+  z-index: 1;
+}
+
+.theme-toggle-container:hover .icon.show {
+  transform: translateX(30px);
+  opacity: 0;
+}
+
+.theme-toggle-container:hover .icon.hide {
+  transform: translateX(0);
+  opacity: 1;
+}

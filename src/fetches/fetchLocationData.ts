@@ -3,8 +3,8 @@ import axios, { AxiosResponse } from 'axios';
 //types
 import { Coords } from '../interfaces/Coords.ts';
 
-export async function fetchLocationData(coords: Coords): Promise<AxiosResponse> {
-  if (!(coords.latitude && coords.longitude)) {
+export async function fetchLocationData(coords: Coords | null): Promise<AxiosResponse> {
+  if (!coords) {
     const blankResponse = {
       status: 200,
       data: null,

@@ -7,7 +7,7 @@ import { fetchForecastData } from "../fetches/fetchForecastData.ts";
 //types
 import { Coords } from '../interfaces/Coords.ts';
 
-export function useLocationData(coords: Coords) {
+export function useLocationData(coords: Coords | null) {
 
   const locationData = useQuery({
     queryKey: ["location-data", coords],
@@ -19,7 +19,7 @@ export function useLocationData(coords: Coords) {
     return [];
   } else if (locationData.isError) {
     return [];
-  } 
+  }
 
   return [locationData?.data];
 }

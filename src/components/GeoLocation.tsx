@@ -15,18 +15,17 @@ import { useLocationData } from '../hooks/useFetch.ts';
 
 function GeoLocation() {
 
-  const blankCoord = { latitude: 0, longitude: 0 };
-
-  const [userLocation, setUserLocation] = useState<Coords>(blankCoord);
+  const [userLocation, setUserLocation] = useState<Coords | null>(null);
   const [screenSize, setScreenSize] = useState<number>(window.innerWidth);
   const [celsius, setCelsius] = useState<boolean>(false);
 
   const [locationData] = useLocationData(userLocation);
 
+  console.log(locationData);
 
   // gets the user's location
   useEffect(() => {
-    if (!(userLocation.latitude && userLocation.longitude) && navigator.geolocation) {
+    if (!userLocation && navigator.geolocation) {
       getUserLocation();
     }
 

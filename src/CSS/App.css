@@ -1,0 +1,71 @@
+/*
+font-family: "Outfit", sans-serif;
+*/
+
+
+:root {
+  --light-bg: #FFFFFF;
+  --dark-bg: #000000;
+  --light-text: #000000;
+  --dark-text: #FFFFFF;
+}
+
+#root {
+  max-width: 1280px;
+  text-align: center;
+}
+
+/* GeoLocation */
+.geolocation {
+  width: 100vw;
+}
+.heading-div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.weather-in-header {
+  margin: 1rem 0;
+}
+.absolute-position-div {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  right: 10px;
+  top: 10px;
+}
+
+/* Time */
+.time {
+  font-size: 30px;
+  margin: 0;
+}
+
+/* MEDIA QUERIES */
+@media (max-width: 900px) {
+  .heading-div {
+    justify-content: flex-start;
+  }
+}
+@media (max-width: 600px) {
+  .weather-in-header {
+    margin-left: 10px;
+  }
+}
+@media (max-width: 450px) {
+  .forecast-list-div {
+    margin: 1rem 0;
+  }
+  .forecast-list-item-div {
+    margin: 1rem 0.3rem;
+  }
+  .weather-in-header {
+    font-size: 20px;
+  }
+  .time {
+    font-size: 20px;
+  }
+}

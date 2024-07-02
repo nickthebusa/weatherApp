@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDroplet } from '@fortawesome/free-solid-svg-icons'
+
+import "../CSS/ForecastList.css";
 
 // hooks
 import { useForecastData } from '../hooks/useFetch.ts';
@@ -31,13 +32,13 @@ interface ListItem {
   detailedForecast: string;
 }
 
+const apiUrl = "https://api.weather.gov";
+
 function ForecastList(props: ForecastListProps) {
 
   const [sortedList, setSortedList] = useState<ListItem[][]>([])
 
   const [forecastData] = useForecastData(props.urlForecast);
-
-  const apiUrl = "https://api.weather.gov";
 
   useEffect(() => {
 
@@ -50,7 +51,7 @@ function ForecastList(props: ForecastListProps) {
           const item1 = new Date(forecastList[i].startTime);
           const item2 = new Date(forecastList[i + 1].startTime);
           if (item1.getDay() === item2.getDay()) {
-            updatedList.push([forecastList[i], forecastList[i+1]])
+            updatedList.push([forecastList[i], forecastList[i + 1]])
           }
         }
       }
@@ -61,7 +62,7 @@ function ForecastList(props: ForecastListProps) {
       const newList = makeNewList(forecastList)
       setSortedList(newList);
     }
-  },[setSortedList, forecastData])
+  }, [setSortedList, forecastData])
 
 
   return (
@@ -71,22 +72,19 @@ function ForecastList(props: ForecastListProps) {
           <p>{item[0].name}</p>
           {
             props.celsius ?
-              (<p
-                onClick={() => props.setCelsius(!props.celsius)}
-               >
-                {((item[0].temperature - 32) * (5 / 9)).toFixed(2)} /
-                {((item[1].temperature - 32) * (5 / 9)).toFixed(2)} {" °C"}
-              </p>)
+              (<div className='temp-div-list' onClick={() => props.setCelsius(!props.celsius)}>
+                <p>{Math.round((item[0].temperature - 32) * (5 / 9))} / {Math.round((item[1].temperature - 32) * (5 / 9))}</p>
+                <p className='unit-of-measurement'>{"° C"}</p>
+              </div>
+              )
               :
-              (<p
-                onClick={() => props.setCelsius(!props.celsius)}
-              >
-                {item[0].temperature} /
-                {item[1].temperature} °{item[0].temperatureUnit}
-              </p>)
+              (<div className="temp-div-list" onClick={() => props.setCelsius(!props.celsius)}>
+                <p>{item[0].temperature} / {item[1].temperature}</p>
+                <p className='unit-of-measurement'>{`° ${item[0].temperatureUnit}`}</p>
+              </div>)
           }
           <p className='precipitation-weekly'>
-            <FontAwesomeIcon className='weekly-droplet' icon={faDroplet}/>
+            <FontAwesomeIcon className='weekly-droplet' icon={faDroplet} />
             {item[0].probabilityOfPrecipitation.value || 0}-
             {item[1].probabilityOfPrecipitation.value || 0}%
           </p>

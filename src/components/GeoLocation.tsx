@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 // components
 import CurrentWeather from './CurrentWeather.tsx';
 import ForecastList from './ForecastList.tsx';
+import HourlyList from './HourlyList.tsx';
 import Time from './Time.tsx';
 import ThemeSwitch from './ThemeSwitch.tsx';
 
@@ -21,7 +22,6 @@ function GeoLocation() {
 
   const [locationData] = useLocationData(userLocation);
 
-  console.log(locationData);
 
   // gets the user's location
   useEffect(() => {
@@ -65,8 +65,8 @@ function GeoLocation() {
         <div className='heading-div'>
           {
             screenSize > 600 ?
-              (<h2 className='weather-in-header'>Weather in { city }, { state } </h2>):
-              (<h2 className='weather-in-header'>{ city }, { state } </h2>)
+              (<h2 className='weather-in-header'>Weather in {city}, {state} </h2>) :
+              (<h2 className='weather-in-header'>{city}, {state} </h2>)
           }
           <div className='absolute-position-div'>
             <ThemeSwitch />
@@ -83,6 +83,21 @@ function GeoLocation() {
       const myForecastHourly = locationData.data.properties.forecastHourly as string;
       return (
         <CurrentWeather
+          urlForecast={myForecast}
+          urlForecastHourly={myForecastHourly}
+          celsius={celsius}
+          setCelsius={setCelsius}
+        />
+      )
+    }
+  }
+
+  function hourlyList() {
+    if (locationData && locationData.data) {
+      const myForecast = locationData.data.properties.forecast as string;
+      const myForecastHourly = locationData.data.properties.forecastHourly as string;
+      return (
+        <HourlyList
           urlForecast={myForecast}
           urlForecastHourly={myForecastHourly}
           celsius={celsius}
@@ -109,6 +124,7 @@ function GeoLocation() {
     <div className='geolocation'>
       {headerLocation()}
       {currentWeather()}
+      {hourlyList()}
       {forecastList()}
     </div>
   )

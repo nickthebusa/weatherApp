@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import './App.css';
+import './CSS/App.css';
 
 // my components
 import GeoLocation from "./components/GeoLocation.tsx";
@@ -10,7 +10,7 @@ function App() {
 
   return (
 
-    <QueryClientProvider client={ queryClient }>
+    <QueryClientProvider client={queryClient}>
       <GeoLocation></GeoLocation>
     </QueryClientProvider>
 

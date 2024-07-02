@@ -3,14 +3,13 @@ import { useState, useEffect, useCallback } from "react";
 import { FaRegMoon } from "react-icons/fa6";
 import { FaRegLightbulb } from "react-icons/fa";
 
-import "../ThemeSwitch.css";
+import "../CSS/ThemeSwitch.css";
 
 /* DARK MODE:
   color: #FAF9F6;
   background-color: #242424;
   border-color: #FAF9F6;
 */
-
 
 
 /* LIGHT MODE
@@ -59,8 +58,8 @@ function ThemeSwitch() {
             </>
           ) : (
             <>
-                <FaRegLightbulb className={`icon ${hovering ? 'hide' : 'show'}`} />
-                <FaRegMoon className={`icon ${hovering ? 'show' : 'hide'}`} />
+              <FaRegLightbulb className={`icon ${hovering ? 'hide' : 'show'}`} />
+              <FaRegMoon className={`icon ${hovering ? 'show' : 'hide'}`} />
             </>
           )
         }

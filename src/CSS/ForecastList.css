@@ -1,0 +1,34 @@
+
+.forecast-list-div {
+  margin: 1rem;
+}
+
+.forecast-list-item-div {
+  text-align: left;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  margin: 1rem;
+}
+.forecast-list-item-div img {
+  width: 2rem;
+  height: auto;
+  border-radius: 10px;
+}
+.precipitation-weekly {
+}
+.weekly-droplet {
+}
+.temp-div-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+.unit-of-measurement {
+  cursor: pointer;
+}
+
+p {
+  margin: 0;
+}
+
+

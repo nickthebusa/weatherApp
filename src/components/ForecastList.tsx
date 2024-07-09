@@ -65,6 +65,14 @@ function ForecastList(props: ForecastListProps) {
   }, [setSortedList, forecastData])
 
 
+  function checkIconUrl(iconStr: string) {
+    if (!iconStr.includes(apiUrl)) {
+      return apiUrl.concat(iconStr);
+    }
+    return iconStr;
+  }
+
+
   return (
     <div className='forecast-list-div'>
       {sortedList.map((item: ListItem[], i: number) => (
@@ -88,7 +96,7 @@ function ForecastList(props: ForecastListProps) {
             {item[0].probabilityOfPrecipitation.value || 0}-
             {item[1].probabilityOfPrecipitation.value || 0}%
           </p>
-          <img src={apiUrl.concat(item[0].icon)} alt="forecast-icon-weekly" />
+          <img src={checkIconUrl(item[0].icon)} alt="forecast-icon-weekly" />
         </div>
       ))}
     </div>

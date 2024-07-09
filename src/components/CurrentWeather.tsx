@@ -5,7 +5,8 @@ import { faDroplet } from '@fortawesome/free-solid-svg-icons'
 import "../CSS/CurrentWeather.css";
 
 // functions
-import { getTextColor } from "../functions/getTextColor.ts";
+//import { getTextColor } from "../functions/getTextColor.ts";
+import { getWhiteOrBlack } from "../functions/getWhiteOrBlack.ts";
 
 // hooks
 import { useForecastData, useForecastHourly } from '../hooks/useFetch.ts';
@@ -28,13 +29,19 @@ function CurrentWeather(props: CurrentWeatherProps) {
 
   const tempNumber = forecastHourly ? forecastHourly.data.properties.periods[0].temperature : '';
   const tempUnit = forecastHourly ? forecastHourly.data.properties.periods[0].temperatureUnit : ''
-  const forecastIcon = forecastData ? forecastData.data.properties.periods[0].icon : '';
+  let forecastIcon = forecastData ? forecastData.data.properties.periods[0].icon : '';
   const detailedForecast = forecastData ? forecastData.data.properties.periods[0].detailedForecast : '';
   const precipitation = forecastData ? forecastData.data.properties.periods[0].probabilityOfPrecipitation.value : 0;
 
   useEffect(() => {
     if (forecastIcon) {
-      getTextColor(`${apiUrl}${forecastIcon}`).then((c: string) => {
+
+      // check if returned icon is valid url
+      if (!forecastIcon.includes(apiUrl)) {
+        let res = apiUrl.concat(forecastIcon);
+        forecastIcon = res;
+      }
+      getWhiteOrBlack(`${forecastIcon}`).then((c: string) => {
         setTextColor(c);
       })
     }
@@ -43,10 +50,13 @@ function CurrentWeather(props: CurrentWeatherProps) {
   function fillBg() {
     if (forecastIcon) {
       return (
-        <div className='current-weather-bg' style={{
-          backgroundImage: `url(${apiUrl}${forecastIcon}`,
-          backgroundPosition: '50% 50%'
-        }}></div>
+        <div
+          className='current-weather-bg'
+          style={{
+            backgroundImage: `url(${forecastIcon}`,
+            backgroundPosition: '50% 50%'
+          }}>
+        </div>
       )
     }
   }
@@ -75,7 +85,7 @@ function CurrentWeather(props: CurrentWeatherProps) {
                   </div>)
               }
               <p className='current-prec'><FontAwesomeIcon className='current-droplet' icon={faDroplet} />{precipitation || 0}%</p>
-              <img className='forecast-icon' src={apiUrl.concat(forecastIcon)} alt="forecast-icon" />
+              <img className='forecast-icon' src={forecastIcon} alt="forecast-icon" />
               <p className='detailed-forecast'>{detailedForecast}</p>
             </div>
           ) :

@@ -19,8 +19,8 @@ function HourlyList(props: HourlyListProps) {
   const [forecastData] = useForecastData(props.urlForecast);
   const [forecastHourly] = useForecastHourly(props.urlForecastHourly);
 
-  console.log(forecastData);
-  console.log(forecastHourly);
+  //console.log(forecastData);
+  //console.log(forecastHourly);
 
   return (
     <div className="hourly-list-div">

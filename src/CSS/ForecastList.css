@@ -1,13 +1,15 @@
-
 .forecast-list-div {
   margin: 1rem;
 }
-
 .forecast-list-item-div {
   text-align: left;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr auto;
-  margin: 1rem;
+  grid-template-columns: 1.8fr 1.2fr 1fr auto;
+  padding: 0.3rem;
+  align-items: end;
+}
+.forecast-list-item-div:hover {
+  background-color: rgba(128, 128, 128, 0.5);
 }
 .forecast-list-item-div img {
   width: 2rem;
@@ -17,6 +19,7 @@
 .precipitation-weekly {
 }
 .weekly-droplet {
+  margin: 0 0.5rem 0 0;
 }
 .temp-div-list {
   display: flex;
@@ -26,9 +29,19 @@
 .unit-of-measurement {
   cursor: pointer;
 }
-
 p {
   margin: 0;
 }
 
+
+/* MEDIA QUERIES */
+@media (max-width: 450px) {
+  .forecast-list-div {
+    margin: 1rem 0;
+  }
+  .forecast-list-item-div {
+    padding: 0.3rem 0.3rem;
+    font-size: 0.9rem;
+  }
+}
 

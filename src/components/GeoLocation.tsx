@@ -49,6 +49,12 @@ function GeoLocation() {
         },
         // if error getting position
         (error) => {
+          const errors = [
+            "PERMISSION_DENIED: The acquisition of the geolocation information failed because the page didn't have the necessary permissions, for example because it is blocked by a Permissions Policy",
+            "POSITION_UNAVAILABLE : The acquisition of the geolocation failed because at least one internal source of position returned an internal error.",
+            "TIMEOUT: The time allowed to acquire the geolocation was reached before the information was obtained."
+          ]
+          alert(errors[error.code - 1]);
           console.error("Error getting location: ", error);
         }
       )

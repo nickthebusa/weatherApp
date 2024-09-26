@@ -1,0 +1,11 @@
+.HourlyList {
+  display: inline-block;
+  border: 1px solid;
+  border-radius: 20px;
+  position: relative;
+  margin:  5px 17px;
+  padding: 1rem;
+}
+.HourlyList ul {
+  list-style: none;
+}

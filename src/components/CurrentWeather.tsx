@@ -1,97 +1,71 @@
-import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDroplet } from '@fortawesome/free-solid-svg-icons'
+import { faDroplet, faSnowflake } from '@fortawesome/free-solid-svg-icons'
 
 import "../CSS/CurrentWeather.css";
 
-// functions
-//import { getTextColor } from "../functions/getTextColor.ts";
-import { getWhiteOrBlack } from "../functions/getWhiteOrBlack.ts";
-
-// hooks
-import { useForecastData, useForecastHourly } from '../hooks/useFetch.ts';
+// interfaces
+import { Realtime } from '../interfaces/Realtime';
+import { DayForecast } from '../interfaces/Forecast';
 
 interface CurrentWeatherProps {
-  urlForecast: string;
-  urlForecastHourly: string;
+  realtimeData: Realtime;
+  forecastData: DayForecast;
   celsius: boolean;
   setCelsius: (celsius: boolean) => void;
 }
 
-const apiUrl = "https://api.weather.gov";
+const CurrentWeather: React.FC<CurrentWeatherProps> = ({ realtimeData, forecastData, celsius, setCelsius }) => {
 
-function CurrentWeather(props: CurrentWeatherProps) {
-
-  const [textColor, setTextColor] = useState<string>("");
-
-  const [forecastData] = useForecastData(props.urlForecast);
-  const [forecastHourly] = useForecastHourly(props.urlForecastHourly);
-
-  const tempNumber = forecastHourly ? forecastHourly.data.properties.periods[0].temperature : '';
-  const tempUnit = forecastHourly ? forecastHourly.data.properties.periods[0].temperatureUnit : ''
-  let forecastIcon = forecastData ? forecastData.data.properties.periods[0].icon : '';
-  const detailedForecast = forecastData ? forecastData.data.properties.periods[0].detailedForecast : '';
-  const precipitation = forecastData ? forecastData.data.properties.periods[0].probabilityOfPrecipitation.value : 0;
-
-  useEffect(() => {
-    if (forecastIcon) {
-
-      // check if returned icon is valid url
-      if (!forecastIcon.includes(apiUrl)) {
-        let res = apiUrl.concat(forecastIcon);
-        forecastIcon = res;
-      }
-      getWhiteOrBlack(`${forecastIcon}`).then((c: string) => {
-        setTextColor(c);
-      })
-    }
-  }, [forecastIcon])
-
-  function fillBg() {
-    if (forecastIcon) {
-      return (
-        <div
-          className='current-weather-bg'
-          style={{
-            backgroundImage: `url(${forecastIcon}`,
-            backgroundPosition: '50% 50%'
-          }}>
-        </div>
-      )
-    }
-  }
+  const tempNumberF = realtimeData?.temp_f || "";
+  const tempNumberC = realtimeData?.temp_c || "";
+  const forecastIcon = realtimeData?.condition?.icon || "";
+  const detailedForecast = realtimeData?.condition?.text || "";
+  const percentRain = forecastData?.daily_chance_of_rain || "0";
+  const percentSnow = forecastData?.daily_chance_of_snow || "0";
+  const willRain = forecastData?.daily_will_it_rain || "";
+  const willSnow = forecastData?.daily_will_it_snow || "";
 
   return (
-    <div className='current-weather-cont' style={{ color: textColor }}>
-      <div className='current-weather-div'>
-        {fillBg()}
-        {forecastData ?
+    <div className='CurrentWeather'>
+      <h3>Current Weather</h3>
+      {
+        celsius ?
+          (<div className='temp-div'>
+            <p>{tempNumberC}</p>
+            <p title='switch to fahrenheit'
+              className='temp-unit'
+              onClick={() => setCelsius(!celsius)}>{"° C"}</p>
+          </div>) :
+          (<div className='temp-div'>
+            <p>{tempNumberF}</p>
+            <p title='switch to celsius'
+              className='temp-unit'
+              onClick={() => setCelsius(!celsius)}>{`° F`}</p>
+          </div>)
+      }
+      {
+        percentSnow > percentRain ?
+          (<div>
+            <p className='current-prec'>
+              <FontAwesomeIcon className='current-droplet' icon={faSnowflake} />{percentSnow}%
+            </p>
+          </div>) :
+          (<div>
+            <p className='current-prec'>
+              <FontAwesomeIcon className='current-droplet' icon={faDroplet} />{percentRain}%
+            </p>
+          </div>)
+      }
+      <img className='forecast-icon' src={`http:${forecastIcon}`} alt="forecast-icon" />
+      <p className='detailed-forecast'>{detailedForecast}</p>
+      {
+        willSnow ?
           (
-            <div className='forecast-current'>
-              <h3>Current Weather</h3>
-              {
-                props.celsius ?
-                  (<div className='temp-div'>
-                    <p>{Math.round((tempNumber - 32) * (5 / 9))}</p>
-                    <p title='switch to fahrenheit'
-                      className='temp-unit'
-                      onClick={() => props.setCelsius(!props.celsius)}>{"° C"}</p>
-                  </div>) :
-                  (<div className='temp-div'>
-                    <p>{tempNumber}</p>
-                    <p title='switch to celsius'
-                      className='temp-unit'
-                      onClick={() => props.setCelsius(!props.celsius)}>{`° ${tempUnit}`}</p>
-                  </div>)
-              }
-              <p className='current-prec'><FontAwesomeIcon className='current-droplet' icon={faDroplet} />{precipitation || 0}%</p>
-              <img className='forecast-icon' src={forecastIcon} alt="forecast-icon" />
-              <p className='detailed-forecast'>{detailedForecast}</p>
-            </div>
-          ) :
-          (<p>Loading...</p>)
-        }
-      </div>
+            <p className='will-rain'>{willSnow ? "its gonna snow" : "no snow"}</p>
+          ) : (
+            < p className='will-rain'>{willRain ? "its gonna rain" : "we prolly good"}</p>
+          )
+      }
     </div>
   )
 }

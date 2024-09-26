@@ -1,29 +1,28 @@
-
 import "../CSS/HourlyList.css";
-
-// hooks
-import { useForecastData, useForecastHourly } from '../hooks/useFetch.ts';
+import { DayForecast } from "../interfaces/Forecast";
 
 interface HourlyListProps {
-  urlForecast: string;
-  urlForecastHourly: string;
   celsius: boolean;
   setCelsius: (celsius: boolean) => void;
+  forecastHourly: DayForecast[] | null;
 }
 
 
 // add horizontal list of the next 23 hours of predictions
 // ? mayb add switch between period time and military time ?
 
-function HourlyList(props: HourlyListProps) {
-  const [forecastData] = useForecastData(props.urlForecast);
-  const [forecastHourly] = useForecastHourly(props.urlForecastHourly);
-
-  console.log(forecastData);
-  console.log(forecastHourly);
+const HourlyList: React.FC<HourlyListProps> = ({ celsius, setCelsius, forecastHourly }) => {
 
   return (
-    <div className="hourly-list-div">
+    <div className="HourlyList">
+      <ul>
+        {forecastHourly && forecastHourly.map((forecast, i) => (
+          <li key={i}>
+            <p>{forecast.condition.text}</p>
+            <img src={`http:${forecast.condition.icon}`} alt="forecast-icon" />
+          </li>
+        ))}
+      </ul>
     </div>
   )
 

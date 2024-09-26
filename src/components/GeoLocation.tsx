@@ -1,18 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 // components
 import CurrentWeather from './CurrentWeather.tsx';
-import ForecastList from './ForecastList.tsx';
-import HourlyList from './HourlyList.tsx';
-import Time from './Time.tsx';
-import ThemeSwitch from './ThemeSwitch.tsx';
+import SearchLocation from './SearchLocation.tsx';
+import HeaderLocation from "./HeaderLocation.tsx";
+import HourlyList from "./HourlyList.tsx";
 
 // types
 import { Coords } from '../interfaces/Coords.ts';
 
 // // hooks
-import { useLocationData } from '../hooks/useFetch.ts';
+import { useRealtimeData, useForecastData } from '../hooks/useFetch.ts';
 
+// functions
+import { getUserLocation } from '../functions/getUserLocation.ts';
 
 function GeoLocation() {
 
@@ -20,13 +21,29 @@ function GeoLocation() {
   const [screenSize, setScreenSize] = useState<number>(window.innerWidth);
   const [celsius, setCelsius] = useState<boolean>(false);
 
-  const [locationData] = useLocationData(userLocation);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
+  const [realtimeData] = useRealtimeData(userLocation);
+  const [forecastData] = useForecastData(userLocation);
+
+
+  const handleLocationChange = useCallback(async () => {
+    setLoading(true);
+    try {
+      const coords = await getUserLocation();
+      setUserLocation(coords);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+    } finally {
+      setLoading(false);
+    }
+  }, [])
 
   // gets the user's location
   useEffect(() => {
     if (!userLocation && navigator.geolocation) {
-      getUserLocation();
+      handleLocationChange();
     }
 
     function resize() {
@@ -36,102 +53,55 @@ function GeoLocation() {
     window.addEventListener('resize', resize);
     return () => window.removeEventListener('resize', resize);
 
-  }, [userLocation, setScreenSize])
+  }, [userLocation, setScreenSize, handleLocationChange])
 
 
-  function getUserLocation(): void {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        // if position
-        (pos: GeolocationPosition) => {
-          const { latitude, longitude } = pos.coords;
-          setUserLocation({ latitude: latitude, longitude: longitude });
-        },
-        // if error getting position
-        (error) => {
-          const errors = [
-            "PERMISSION_DENIED: The acquisition of the geolocation information failed because the page didn't have the necessary permissions, for example because it is blocked by a Permissions Policy",
-            "POSITION_UNAVAILABLE : The acquisition of the geolocation failed because at least one internal source of position returned an internal error.",
-            "TIMEOUT: The time allowed to acquire the geolocation was reached before the information was obtained."
-          ]
-          alert(errors[error.code - 1]);
-          console.error("Error getting location: ", error);
-        }
-      )
-    } else {
-      console.error('Geolocation not supported');
-    }
-  }
 
-  function headerLocation() {
-    if (locationData && locationData.data) {
-      const city = locationData.data.properties.relativeLocation.properties.city as string;
-      const state = locationData.data.properties.relativeLocation.properties.state as string;
-      return (
-        <div className='heading-div'>
-          {
-            screenSize > 600 ?
-              (<h2 className='weather-in-header'>Weather in {city}, {state} </h2>) :
-              (<h2 className='weather-in-header'>{city}, {state} </h2>)
-          }
-          <div className='absolute-position-div'>
-            <ThemeSwitch />
-            <Time />
-          </div>
-        </div>
-      )
-    }
-  }
+  //function forecastList() {
+  //  if (locationData && locationData.data) {
+  //    const myForecast = locationData.data.properties.forecast as string;
+  //    return (
+  //      <ForecastList
+  //        urlForecast={myForecast}
+  //        celsius={celsius}
+  //        setCelsius={setCelsius}
+  //      />
+  //    )
+  //  }
+  //}
 
-  function currentWeather() {
-    if (locationData && locationData.data) {
-      const myForecast = locationData.data.properties.forecast as string;
-      const myForecastHourly = locationData.data.properties.forecastHourly as string;
-      return (
-        <CurrentWeather
-          urlForecast={myForecast}
-          urlForecastHourly={myForecastHourly}
-          celsius={celsius}
-          setCelsius={setCelsius}
-        />
-      )
-    }
-  }
+  //      {forecastList()}
 
-  function hourlyList() {
-    if (locationData && locationData.data) {
-      const myForecast = locationData.data.properties.forecast as string;
-      const myForecastHourly = locationData.data.properties.forecastHourly as string;
-      return (
-        <HourlyList
-          urlForecast={myForecast}
-          urlForecastHourly={myForecastHourly}
-          celsius={celsius}
-          setCelsius={setCelsius}
-        />
-      )
-    }
-  }
-
-  function forecastList() {
-    if (locationData && locationData.data) {
-      const myForecast = locationData.data.properties.forecast as string;
-      return (
-        <ForecastList
-          urlForecast={myForecast}
-          celsius={celsius}
-          setCelsius={setCelsius}
-        />
-      )
-    }
-  }
 
   return (
     <div className='geolocation'>
-      {headerLocation()}
-      {currentWeather()}
-      {hourlyList()}
-      {forecastList()}
+
+      <div className="errors">
+        {error}
+      </div>
+
+      <HeaderLocation
+        loading={loading}
+        locationData={realtimeData?.data?.location || null}
+        screenSize={screenSize}
+      />
+      <SearchLocation
+        setUserLocation={setUserLocation}
+        getUserLocation={getUserLocation}
+      />
+      <div className="forecast-modules">
+        <CurrentWeather
+          realtimeData={realtimeData?.data?.current || null}
+          forecastData={forecastData?.data?.forecast?.forecastday[0]?.day || null}
+          celsius={celsius}
+          setCelsius={setCelsius}
+        />
+        <HourlyList
+          forecastHourly={forecastData?.data?.forecast?.forecastday[0]?.hour || null}
+          celsius={celsius}
+          setCelsius={setCelsius}
+        />
+      </div>
     </div>
   )
 }

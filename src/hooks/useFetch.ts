@@ -36,6 +36,7 @@ export function useForecastData(coords: Coords | null) {
   return [forecastData?.data];
 }
 
+/*
 export function useLocationData(coords: Coords | null) {
 
   const locationData = useQuery({
@@ -52,4 +53,4 @@ export function useLocationData(coords: Coords | null) {
 
   return [locationData?.data];
 }
-
+*/

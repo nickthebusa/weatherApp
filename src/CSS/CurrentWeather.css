@@ -1,10 +1,12 @@
 .CurrentWeather {
-  display: inline-block;
+  display: block;
   border: 1px solid;
   border-radius: 20px;
   position: relative;
   margin:  5px 17px;
   padding: 1rem;
+  text-align: center;
+  width: fit-content;
 }
 .CurrentWeather h3 {
   margin: 0;
@@ -16,6 +18,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
 }
 .temp-div p {
   margin-bottom: 8px;

@@ -1,10 +1,10 @@
 import "../CSS/HourlyList.css";
-import { DayForecast } from "../interfaces/Forecast";
+import { HourForecast } from "../interfaces/Forecast";
 
 interface HourlyListProps {
   celsius: boolean;
   setCelsius: (celsius: boolean) => void;
-  forecastHourly: DayForecast[] | null;
+  forecastHourly: HourForecast[] | null;
 }
 
 
@@ -13,13 +13,25 @@ interface HourlyListProps {
 
 const HourlyList: React.FC<HourlyListProps> = ({ celsius, setCelsius, forecastHourly }) => {
 
+  const getPeriodTime = (date: string) => {
+    const d = new Date(date);
+    let hours = d.getHours();
+    //const minutes = d.getMinutes().toString().padStart(2, '0');
+    const period = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    const time = `${hours} ${period}`;
+    return time;
+  }
+
   return (
     <div className="HourlyList">
       <ul>
         {forecastHourly && forecastHourly.map((forecast, i) => (
           <li key={i}>
-            <p>{forecast.condition.text}</p>
+            <p>{getPeriodTime(forecast.time)}</p>
+            <p onClick={() => setCelsius(!celsius)}>{celsius ? `${forecast.temp_c}°C` : `${forecast.temp_f}°F`}</p>
             <img src={`http:${forecast.condition.icon}`} alt="forecast-icon" />
+            <p>{forecast.condition.text}</p>
           </li>
         ))}
       </ul>

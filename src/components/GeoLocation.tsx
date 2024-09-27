@@ -5,6 +5,8 @@ import CurrentWeather from './CurrentWeather.tsx';
 import SearchLocation from './SearchLocation.tsx';
 import HeaderLocation from "./HeaderLocation.tsx";
 import HourlyList from "./HourlyList.tsx";
+import DailyList from "./DailyList.tsx";
+
 
 // types
 import { Coords } from '../interfaces/Coords.ts';
@@ -27,6 +29,7 @@ function GeoLocation() {
   const [realtimeData] = useRealtimeData(userLocation);
   const [forecastData] = useForecastData(userLocation);
 
+  console.log(forecastData)
 
   const handleLocationChange = useCallback(async () => {
     setLoading(true);
@@ -85,23 +88,36 @@ function GeoLocation() {
         locationData={realtimeData?.data?.location || null}
         screenSize={screenSize}
       />
-      <SearchLocation
-        setUserLocation={setUserLocation}
-        getUserLocation={getUserLocation}
-      />
-      <div className="forecast-modules">
-        <CurrentWeather
-          realtimeData={realtimeData?.data?.current || null}
-          forecastData={forecastData?.data?.forecast?.forecastday[0]?.day || null}
-          celsius={celsius}
-          setCelsius={setCelsius}
-        />
-        <HourlyList
-          forecastHourly={forecastData?.data?.forecast?.forecastday[0]?.hour || null}
-          celsius={celsius}
-          setCelsius={setCelsius}
-        />
-      </div>
+      {!loading ? (
+        <div className="complete-data">
+          <SearchLocation
+            setUserLocation={setUserLocation}
+            getUserLocation={getUserLocation}
+          />
+          <div className="forecast-modules">
+            <CurrentWeather
+              realtimeData={realtimeData?.data?.current || null}
+              forecastData={forecastData?.data?.forecast?.forecastday[0]?.day || null}
+              celsius={celsius}
+              setCelsius={setCelsius}
+            />
+            <div className="list-modules">
+              <HourlyList
+                forecastHourly={forecastData?.data?.forecast?.forecastday[0]?.hour || null}
+                celsius={celsius}
+                setCelsius={setCelsius}
+              />
+              <DailyList
+                forecastDaily={forecastData?.data?.forecast?.forecastday || null}
+                celsius={celsius}
+                setCelsius={setCelsius}
+              />
+            </div>
+          </div>
+        </div>
+      ) :
+        (<div className="loading-data">LOADING</div>)
+      }
     </div>
   )
 }

@@ -12,8 +12,9 @@ font-family: "Outfit", sans-serif;
 
 body{
   margin: 0;
-  width: 100%;
+  width: 100vw;
   min-width: 275px;
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -46,7 +47,12 @@ body{
 
 /* GeoLocation */
 .forecast-modules {
-  display: block;
+  display: flex;
+}
+.list-modules {
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
 }
 
 

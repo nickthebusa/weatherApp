@@ -1,4 +1,4 @@
-.HourlyList {
+.DailyList {
   display: flex;
   border: 1px solid;
   border-radius: 20px;
@@ -8,25 +8,25 @@
   height: fit-content;
   padding: 0.3rem 0.2rem;
 }
-.HourlyList ul {
+.DailyList ul {
   list-style: none;
   display: flex;
   flex-direction: row;
   margin: 0;
   padding: 0;
 }
-.HourlyList ul li {
+.DailyList ul li {
   display: inline-flex;
   flex-direction: column;
   text-align: center;
   width: 5rem;
 }
-.HourlyList ul li p {
+.DailyList ul li p {
   margin: 0;
   padding: 0;
   white-space: nowrap;
 }
-.HourlyList ul li img {
+.DailyList ul li img {
   margin: 0 auto;
   width: 3rem;
 }
